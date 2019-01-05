@@ -1,3 +1,8 @@
+'use strict';
+
+// global variable
+let active = false
+
 function extractHostname(url) {
   let hostname;
   if (url.indexOf("//") > -1) {
@@ -24,18 +29,13 @@ function extractRootDomain(url) {
   return domain;
 }
 
-function getLocation(href) {
-  let l = document.createElement("a");
-  l.href = href;
-  return l;
-};
-
 function sortTabsInCurrentWindow() {
+  if (!active) return
+
+  
   chrome.tabs.query({}, function (tabs) {
     const tabSorted = tabs.sort((a, b) => {
-      const ah = getLocation(a.favIconUrl).hostname
-      const bh = getLocation(b.favIconUrl).hostname
-      return extractRootDomain(ah).localeCompare(extractRootDomain(bh))
+      return extractRootDomain(a.favIconUrl).localeCompare(extractRootDomain(b.favIconUrl))
     })
     for (let i = 0; i < tabSorted.length; i++) {
       chrome.tabs.move(tabSorted[i].id, { index: i }, null)
@@ -43,6 +43,23 @@ function sortTabsInCurrentWindow() {
   })
 }
 
+function setIcon() {
+  const activeIconFile = active ? 'active' : 'inactive'
+  chrome.browserAction.setIcon({ path: 'icon/' + activeIconFile + '.png' })
+
+  console.log('app', active ? "on" : "off")
+}
+
+function appIconOnClick(tab) {
+  active = !active
+  setIcon()
+  if (active)
+    sortTabsInCurrentWindow()
+}
+
+// onload app
+setIcon()
+chrome.browserAction.onClicked.addListener(appIconOnClick)
 chrome.tabs.onCreated.addListener(tab => sortTabsInCurrentWindow())
 chrome.tabs.onRemoved.addListener(tab => sortTabsInCurrentWindow())
 chrome.tabs.onUpdated.addListener(tab => sortTabsInCurrentWindow())

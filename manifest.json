@@ -1,14 +1,19 @@
 {
   "name": "Chrome - Tab Automate Sort",
-  "description": "",
+  "description": "We can automate sort your tabs in current window.",
   "version": "0.0.1",
   "manifest_version": 2,
   "permissions": [
+    "storage",
     "tabs"
   ],
   "background": {
     "scripts": [
       "js/background.js"
-    ]
+    ],
+    "persistent": false
+  },
+  "browser_action": {
+    "name": "Click me for active and inactive automate sort"
   }
 }

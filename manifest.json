@@ -1,0 +1,14 @@
+{
+  "name": "Chrome - Tab Automate Sort",
+  "description": "",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "permissions": [
+    "tabs"
+  ],
+  "background": {
+    "scripts": [
+      "js/background.js"
+    ]
+  }
+}

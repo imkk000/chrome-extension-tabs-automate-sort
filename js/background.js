@@ -11,7 +11,7 @@ function getAppStatus() {
   chrome.storage.sync.get('appStatus', result => active = result.appStatus)
 }
 
-function extractHostname(url) {
+function extractHostname(url = '') {
   let hostname
   if (url.indexOf("//") > -1)
     hostname = url.split('/')[2]

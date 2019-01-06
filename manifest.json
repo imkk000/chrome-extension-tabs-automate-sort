@@ -15,5 +15,10 @@
   },
   "browser_action": {
     "name": "Click me for active and inactive automate sort"
+  },
+  "icons": {
+    "16": "app-icon/favicon-16x16.png",
+    "32": "app-icon/favicon-32x32.png",
+    "96": "app-icon/favicon-96x96.png"
   }
 }

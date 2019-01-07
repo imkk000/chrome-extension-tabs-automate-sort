@@ -53,7 +53,8 @@ function sortTabsInCurrentWindow() {
   chrome.tabs.query({}, tabs => {
     [].concat(
       sort(tabs.filter(tab => tab.pinned)),
-      sort(tabs.filter(tab => !tab.pinned)))
+      sort(tabs.filter(tab => !tab.pinned))
+    )
       .forEach((tab, index) => {
         chrome.tabs.move(tab.id, { index }, null)
       })
@@ -67,6 +68,7 @@ function setIcon() {
 }
 
 function appIconOnClick() {
+  getAppStatus()
   active = !active
   setAppStatus()
   setIcon()
@@ -75,8 +77,6 @@ function appIconOnClick() {
 
 // onload app
 setIcon()
-getAppStatus()
 chrome.browserAction.onClicked.addListener(appIconOnClick)
 chrome.tabs.onRemoved.addListener(sortTabsInCurrentWindow)
 chrome.tabs.onUpdated.addListener(sortTabsInCurrentWindow)
-console.log('app loaded')

@@ -62,7 +62,7 @@ function sortTabsInCurrentWindow() {
 
 function setIcon() {
   const activeIconFile = active ? 'active' : 'inactive'
-  chrome.browserAction.setIcon({ path: 'icon/' + activeIconFile + '.png' })
+  chrome.browserAction.setIcon({ path: 'icons/button/' + activeIconFile + '.png' })
   console.log('app:', active ? "on" : "off")
 }
 
@@ -75,6 +75,8 @@ function appIconOnClick() {
 
 // onload app
 setIcon()
+getAppStatus()
 chrome.browserAction.onClicked.addListener(appIconOnClick)
 chrome.tabs.onRemoved.addListener(sortTabsInCurrentWindow)
 chrome.tabs.onUpdated.addListener(sortTabsInCurrentWindow)
+console.log('app loaded')

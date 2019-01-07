@@ -17,8 +17,8 @@
     "name": "Click me for active and inactive automate sort"
   },
   "icons": {
-    "16": "app-icon/favicon-16x16.png",
-    "32": "app-icon/favicon-32x32.png",
-    "96": "app-icon/favicon-96x96.png"
+    "16": "icons/app/favicon-16x16.png",
+    "32": "icons/app/favicon-32x32.png",
+    "96": "icons/app/favicon-96x96.png"
   }
 }

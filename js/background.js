@@ -49,6 +49,7 @@ function sort(tabs) {
 }
 
 function sortTabsInCurrentWindow() {
+  getAppStatus()
   if (!active) return
   chrome.tabs.query({}, tabs => {
     [].concat(
@@ -72,7 +73,7 @@ function appIconOnClick() {
   active = !active
   setAppStatus()
   setIcon()
-  if (active) sortTabsInCurrentWindow()
+  sortTabsInCurrentWindow()
 }
 
 // onload app

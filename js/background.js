@@ -3,12 +3,21 @@
 // global variable
 let active
 
-function setAppStatus() {
-  chrome.storage.sync.set({ appStatus: active }, null)
+async function setAppStatus() {
+  await new Promise((resolve) => {
+    chrome.storage.sync.set({ appStatus: active }, null)
+    resolve()
+  })
 }
 
-function getAppStatus() {
-  chrome.storage.sync.get('appStatus', result => active = result.appStatus)
+async function getAppStatus() {
+  await new Promise((resolve) => {
+    chrome.storage.sync.get('appStatus', result => {
+      active = result.appStatus
+      resolve()
+    })
+  })
+  setIcon()
 }
 
 function extractHostname(url = '') {
@@ -69,15 +78,15 @@ function setIcon() {
 }
 
 function appIconOnClick() {
-  getAppStatus()
   active = !active
   setAppStatus()
-  setIcon()
   sortTabsInCurrentWindow()
 }
 
 // onload app
-setIcon()
-chrome.browserAction.onClicked.addListener(appIconOnClick)
-chrome.tabs.onRemoved.addListener(sortTabsInCurrentWindow)
-chrome.tabs.onUpdated.addListener(sortTabsInCurrentWindow)
+(function () {
+  getAppStatus()
+  chrome.browserAction.onClicked.addListener(appIconOnClick)
+  chrome.tabs.onRemoved.addListener(sortTabsInCurrentWindow)
+  chrome.tabs.onUpdated.addListener(sortTabsInCurrentWindow)
+})()

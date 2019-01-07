@@ -3,14 +3,14 @@
 // global variable
 let active
 
-async function setAppStatus() {
+const setAppStatus = async () => {
   await new Promise((resolve) => {
     chrome.storage.sync.set({ appStatus: active }, null)
     resolve()
   })
 }
 
-async function getAppStatus() {
+const getAppStatus = async () => {
   await new Promise((resolve) => {
     chrome.storage.sync.get('appStatus', result => {
       active = result.appStatus
@@ -20,7 +20,7 @@ async function getAppStatus() {
   setIcon()
 }
 
-function extractHostname(url = '') {
+const extractHostname = (url = '') => {
   let hostname
   if (url.indexOf("//") > -1)
     hostname = url.split('/')[2]
@@ -31,7 +31,7 @@ function extractHostname(url = '') {
   return hostname
 }
 
-function extractRootDomain(url) {
+const extractRootDomain = (url = '') => {
   let domain = extractHostname(url),
     splitArr = domain.split('.'),
     arrLen = splitArr.length
@@ -43,50 +43,48 @@ function extractRootDomain(url) {
   return domain
 }
 
-function compare(a, b) {
-  return a.localeCompare(b, 'en', { 'sensitivity': 'base' })
+const compare = (firstElement = '', secondElement = '') => {
+  return firstElement.localeCompare(secondElement, 'en', { 'sensitivity': 'base' })
 }
 
-function sort(tabs) {
-  return tabs.sort((a, b) => {
-    const axrd = extractRootDomain(a.favIconUrl)
-    const bxrd = extractRootDomain(b.favIconUrl)
-    if (axrd != bxrd) return compare(axrd, bxrd)
-    if (a.title != b.title) return compare(a.title, b.title)
-    return compare(a.url, b.url)
+const sort = (tabs = []) => {
+  return tabs.sort((firstElement, secondElement) => {
+    const aDomainName = extractRootDomain(firstElement.favIconUrl)
+    const bDomainName = extractRootDomain(secondElement.favIconUrl)
+    if (aDomainName != bDomainName) return compare(aDomainName, bDomainName)
+    if (firstElement.title != secondElement.title) return compare(firstElement.title, secondElement.title)
+    return compare(firstElement.url, secondElement.url)
   })
 }
 
-function sortTabsInCurrentWindow() {
+const sortTabsInCurrentWindow = () => {
   getAppStatus()
   if (!active) return
   chrome.tabs.query({}, tabs => {
-    [].concat(
+    const newTabs = [].concat(
       sort(tabs.filter(tab => tab.pinned)),
       sort(tabs.filter(tab => !tab.pinned))
     )
-      .forEach((tab, index) => {
-        chrome.tabs.move(tab.id, { index }, null)
-      })
+    newTabs.forEach((tab, index) => {
+      chrome.tabs.move(tab.id, { index }, null)
+    })
   })
 }
 
-function setIcon() {
+const setIcon = () => {
   const activeIconFile = active ? 'active' : 'inactive'
   chrome.browserAction.setIcon({ path: 'icons/button/' + activeIconFile + '.png' })
-  console.log('app:', active ? "on" : "off")
-}
-
-function appIconOnClick() {
-  active = !active
-  setAppStatus()
-  sortTabsInCurrentWindow()
+  console.info('app:', active ? "on" : "off")
 }
 
 // onload app
-(function () {
+(() => {
   getAppStatus()
-  chrome.browserAction.onClicked.addListener(appIconOnClick)
+  chrome.browserAction.onClicked.addListener(() => {
+    active = !active
+    setAppStatus()
+    sortTabsInCurrentWindow()
+  })
   chrome.tabs.onRemoved.addListener(sortTabsInCurrentWindow)
   chrome.tabs.onUpdated.addListener(sortTabsInCurrentWindow)
 })()

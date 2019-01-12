@@ -1,6 +1,5 @@
 'use strict'
 
-// global variable
 let active
 
 const setAppStatus = async () => {
@@ -61,9 +60,14 @@ const sortTabsInCurrentWindow = () => {
   getAppStatus()
   if (!active) return
   chrome.tabs.query({}, tabs => {
+    const tabsPinned = sort(tabs.filter(tab => tab.pinned))
+    const tabsUnpinned = sort(tabs.filter(tab => !tab.pinned))
+    const tabsStatusComplete = sort(tabsUnpinned.filter(tab => tab.status === 'complete'))
+    const tabsStatusLoading = sort(tabsUnpinned.filter(tab => tab.status === 'loading'))
     const newTabs = [].concat(
-      sort(tabs.filter(tab => tab.pinned)),
-      sort(tabs.filter(tab => !tab.pinned))
+      tabsPinned,
+      tabsStatusComplete,
+      tabsStatusLoading,
     )
     newTabs.forEach((tab, index) => {
       chrome.tabs.move(tab.id, { index }, null)
@@ -77,7 +81,6 @@ const setIcon = () => {
   console.info('app:', active ? "on" : "off")
 }
 
-// onload app
 (() => {
   getAppStatus()
   chrome.browserAction.onClicked.addListener(() => {
